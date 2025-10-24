@@ -12,21 +12,10 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
             background: #000;
             color: #fff;
             overflow: hidden;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="rgba(255,0,0,0.5)"/></svg>'), auto;
-        }
-
-        .container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
         }
 
         .boot-screen {
@@ -52,19 +41,17 @@
 
         .boot-logo {
             font-size: 3rem;
-            color: #8b0000;
-            text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+            color: #fff;
+            font-weight: bold;
             margin-bottom: 2rem;
-            animation: pulse 2s infinite;
             text-align: center;
             padding: 0 2rem;
         }
 
         .boot-text {
-            color: #666;
+            color: #999;
             font-size: 1rem;
             margin: 0.5rem 0;
-            animation: blink 1s infinite;
         }
 
         .progress-bar {
@@ -78,154 +65,157 @@
 
         .progress-fill {
             height: 100%;
-            background: #8b0000;
+            background: #fff;
             width: 0%;
             animation: loading 3s ease-in-out forwards;
-            box-shadow: 0 0 10px #ff0000;
         }
 
         @keyframes loading {
             to { width: 100%; }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        @keyframes blink {
-            0%, 49%, 100% { opacity: 1; }
-            50%, 99% { opacity: 0; }
-        }
-
         .launcher {
             display: none;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 100%);
-            position: relative;
-        }
-
-        .launcher.active {
-            display: block;
-        }
-
-        .static-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
-            pointer-events: none;
-            opacity: 0.3;
-            animation: static 0.1s infinite;
-        }
-
-        @keyframes static {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(10px); }
-        }
-
-        .header {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(180deg, rgba(139,0,0,0.3) 0%, transparent 100%);
-            border-bottom: 2px solid #8b0000;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            color: #8b0000;
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
-            margin-bottom: 0.5rem;
-            letter-spacing: 3px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            padding: 3rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            overflow-y: auto;
-            max-height: calc(100vh - 200px);
-        }
-
-        .game-card {
-            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            height: 100vh;
+            background: #000;
             position: relative;
             overflow: hidden;
         }
 
-        .game-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        .launcher.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .characters-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            height: 70vh;
+            max-height: 600px;
+            position: relative;
+            width: 100%;
+        }
+
+        .character-card {
+            height: 100%;
+            width: 200px;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            filter: brightness(0.4);
+            border: 3px solid transparent;
+        }
+
+        .character-card:hover {
+            filter: brightness(1);
+            transform: scale(1.05);
+            z-index: 10;
+            border: 3px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .character-card.selected {
+            filter: brightness(1);
+            border: 3px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .character-img {
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(139,0,0,0.3), transparent);
-            transition: left 0.5s;
+            object-fit: cover;
+            display: block;
         }
 
-        .game-card:hover::before {
-            left: 100%;
+        .title-box {
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid #fff;
+            padding: 2rem;
+            max-width: 300px;
         }
 
-        .game-card:hover {
-            border-color: #8b0000;
-            box-shadow: 0 0 20px rgba(139,0,0,0.5), inset 0 0 20px rgba(139,0,0,0.1);
-            transform: translateY(-5px);
-        }
-
-        .game-card:active {
-            transform: translateY(-2px);
-        }
-
-        .game-number {
-            font-size: 3rem;
-            color: #8b0000;
-            text-shadow: 0 0 10px #ff0000;
-            margin-bottom: 1rem;
+        .title-box h1 {
+            font-size: 2.5rem;
             font-weight: bold;
-        }
-
-        .game-title {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            margin-bottom: 2rem;
             color: #fff;
+        }
+
+        .play-button {
+            border: 3px solid #fff;
+            background: transparent;
+            color: #fff;
+            font-size: 1.5rem;
             font-weight: bold;
+            padding: 1rem 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .game-subtitle {
-            font-size: 0.9rem;
-            color: #999;
-            margin-bottom: 1rem;
+        .play-button:hover {
+            background: #fff;
+            color: #000;
         }
 
-        .game-status {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: rgba(139,0,0,0.3);
-            border: 1px solid #8b0000;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            color: #ff6666;
-            margin-top: 1rem;
+        .footer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #333;
+        }
+
+        .footer-title {
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .footer-icons {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: #fff;
         }
 
         .loading-screen {
@@ -248,17 +238,15 @@
 
         .loading-screen h2 {
             font-size: 2rem;
-            color: #8b0000;
-            text-shadow: 0 0 20px #ff0000;
+            color: #fff;
             margin-bottom: 2rem;
-            animation: pulse 1.5s infinite;
         }
 
         .loading-spinner {
             width: 50px;
             height: 50px;
             border: 4px solid #333;
-            border-top-color: #8b0000;
+            border-top-color: #fff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -267,136 +255,98 @@
             to { transform: rotate(360deg); }
         }
 
-        .camera-flicker {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .camera-flicker.active {
-            animation: flicker 0.3s;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.3; }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
+        @media (max-width: 1200px) {
+            .character-card {
+                width: 150px;
             }
-            .games-grid {
-                grid-template-columns: 1fr;
-                padding: 1.5rem;
+            .title-box {
+                max-width: 250px;
             }
-            .boot-logo {
+            .title-box h1 {
                 font-size: 2rem;
             }
         }
 
-        .glitch {
-            animation: glitch 3s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 90%, 100% {
-                transform: translate(0);
+        @media (max-width: 768px) {
+            .characters-row {
+                height: 50vh;
             }
-            92% {
-                transform: translate(-2px, 2px);
+            .character-card {
+                width: 100px;
             }
-            94% {
-                transform: translate(2px, -2px);
+            .title-box {
+                position: relative;
+                left: 0;
+                top: 0;
+                transform: none;
+                margin: 2rem auto;
+                max-width: 90%;
             }
-            96% {
-                transform: translate(-2px, -2px);
-            }
-            98% {
-                transform: translate(2px, 2px);
+            .main-content {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <div class="camera-flicker" id="flicker"></div>
-
     <div class="boot-screen" id="bootScreen">
-        <div class="boot-logo glitch">FIVE NIGHTS AT FREDDY'S</div>
-        <div class="boot-text">INITIALIZING SECURITY SYSTEM...</div>
+        <div class="boot-logo">FIVE NIGHTS AT FREDDY'S</div>
+        <div class="boot-text">INITIALIZING SYSTEM...</div>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
     </div>
 
     <div class="launcher" id="launcher">
-        <div class="static-overlay"></div>
+        <div class="main-content">
+            <div class="title-box">
+                <h1>Five Nights at Freddy's</h1>
+                <button class="play-button" id="playButton">Play</button>
+            </div>
 
-        <div class="header">
-            <h1 class="glitch">FNAF GAME LAUNCHER</h1>
-            <p>SELECT YOUR NIGHT OF TERROR</p>
+            <div class="characters-row">
+                <div class="character-card" data-game="fnaf1" data-title="Five Nights at Freddy's">
+                    <div class="character-img" style="background: linear-gradient(135deg, #d4a657 0%, #8b6b3d 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🐻</div>
+                </div>
+
+                <div class="character-card" data-game="fnaf2" data-title="Five Nights at Freddy's 2">
+                    <div class="character-img" style="background: linear-gradient(135deg, #4a5a8a 0%, #2a3a5a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🐰</div>
+                </div>
+
+                <div class="character-card" data-game="fnaf3" data-title="Five Nights at Freddy's 3">
+                    <div class="character-img" style="background: linear-gradient(135deg, #6b7d4a 0%, #4a5d2a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🐻</div>
+                </div>
+
+                <div class="character-card" data-game="fnaf4" data-title="Five Nights at Freddy's 4">
+                    <div class="character-img" style="background: linear-gradient(135deg, #8b6b3d 0%, #5b4b2d 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🎩</div>
+                </div>
+
+                <div class="character-card" data-game="fnafsl" data-title="Sister Location">
+                    <div class="character-img" style="background: linear-gradient(135deg, #d4a657 0%, #b4864f 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🤖</div>
+                </div>
+
+                <div class="character-card" data-game="fnafps" data-title="Pizzeria Simulator">
+                    <div class="character-img" style="background: linear-gradient(135deg, #7d5a4a 0%, #5d3a2a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">🎪</div>
+                </div>
+
+                <div class="character-card" data-game="fnafucn" data-title="Ultimate Custom Night">
+                    <div class="character-img" style="background: linear-gradient(135deg, #4a3a5a 0%, #2a1a3a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem;">👾</div>
+                </div>
+            </div>
         </div>
 
-        <div class="games-grid">
-            <div class="game-card" data-game="fnaf1">
-                <div class="game-number">1</div>
-                <div class="game-title">Five Nights at Freddy's</div>
-                <div class="game-subtitle">The Original Nightmare</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnaf2">
-                <div class="game-number">2</div>
-                <div class="game-title">Five Nights at Freddy's 2</div>
-                <div class="game-subtitle">The Toy Animatronics</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnaf3">
-                <div class="game-number">3</div>
-                <div class="game-title">Five Nights at Freddy's 3</div>
-                <div class="game-subtitle">30 Years Later</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnaf4">
-                <div class="game-number">4</div>
-                <div class="game-title">Five Nights at Freddy's 4</div>
-                <div class="game-subtitle">The Final Chapter</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnafsl">
-                <div class="game-number">SL</div>
-                <div class="game-title">Sister Location</div>
-                <div class="game-subtitle">Underground Facility</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnafps">
-                <div class="game-number">PS</div>
-                <div class="game-title">Pizzeria Simulator</div>
-                <div class="game-subtitle">Build Your Own Pizzeria</div>
-                <div class="game-status">● AVAILABLE</div>
-            </div>
-
-            <div class="game-card" data-game="fnafucn">
-                <div class="game-number">UCN</div>
-                <div class="game-title">Ultimate Custom Night</div>
-                <div class="game-subtitle">50+ Animatronics</div>
-                <div class="game-status">● AVAILABLE</div>
+        <div class="footer-bar">
+            <div class="footer-title">Five Nights at Freddy's - THE COMPLETE COLLECTION</div>
+            <div class="footer-icons">
+                <button class="icon-btn"></button>
+                <button class="icon-btn"></button>
+                <button class="icon-btn"></button>
             </div>
         </div>
     </div>
 
     <div class="loading-screen" id="loadingScreen">
-        <h2>BOOTING GAME SYSTEM...</h2>
+        <h2>LOADING GAME...</h2>
         <div class="loading-spinner"></div>
     </div>
 
@@ -416,37 +366,41 @@
             document.getElementById('launcher').classList.add('active');
         }, 3000);
 
-        const gameCards = document.querySelectorAll('.game-card');
+        const characterCards = document.querySelectorAll('.character-card');
+        const titleBox = document.querySelector('.title-box h1');
+        const playButton = document.getElementById('playButton');
         const loadingScreen = document.getElementById('loadingScreen');
-        const flicker = document.getElementById('flicker');
 
-        gameCards.forEach(card => {
+        let selectedGame = 'fnaf1';
+
+        characterCards.forEach(card => {
             card.addEventListener('click', function() {
-                const game = this.getAttribute('data-game');
+                characterCards.forEach(c => c.classList.remove('selected'));
 
-                flicker.classList.add('active');
-                setTimeout(() => flicker.classList.remove('active'), 300);
+                this.classList.add('selected');
+                selectedGame = this.getAttribute('data-game');
+                const gameTitle = this.getAttribute('data-title');
 
-                loadingScreen.classList.add('active');
-
-                setTimeout(() => {
-                    window.location.href = gameUrls[game];
-                }, 2000);
+                titleBox.textContent = gameTitle;
             });
 
-            card.addEventListener('mouseenter', () => {
-                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiR1/LMeSwF');
-                audio.volume = 0.1;
-                audio.play().catch(() => {});
+            card.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('selected')) {
+                    const gameTitle = this.getAttribute('data-title');
+                    titleBox.textContent = gameTitle;
+                }
             });
         });
 
-        setInterval(() => {
-            if (Math.random() > 0.95) {
-                flicker.classList.add('active');
-                setTimeout(() => flicker.classList.remove('active'), 100);
-            }
-        }, 3000);
+        characterCards[0].classList.add('selected');
+
+        playButton.addEventListener('click', () => {
+            loadingScreen.classList.add('active');
+
+            setTimeout(() => {
+                window.location.href = gameUrls[selectedGame];
+            }, 2000);
+        });
     </script>
 </body>
 </html>
