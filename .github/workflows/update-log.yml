@@ -1,0 +1,79 @@
+name: Auto Update Log
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-log:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Build update block with Gemini
+      - name: Generate update block
+        run: |
+          # Get latest commit message
+          COMMIT_MSG=$(git log -1 --pretty=format:"%s%n%n%b")
+
+          # Get current version
+          VERSION=$(grep -oP 'v\K[0-9]+\.[0-9]+\.[0-9]+' ul.html | head -n 1)
+          if [ -z "$VERSION" ]; then VERSION="1.0.0"; fi
+
+          # Increment patch version
+          IFS='.' read -r MAJ MIN PATCH <<< "$VERSION"
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJ.$MIN.$PATCH"
+
+          # Build Gemini prompt
+          PROMPT="Generate an HTML update block using this template exactly:
+
+<div class=\"update-item\" style=\"--delay: 1\">
+<span class=\"version\">v$NEW_VERSION</span>
+<h3>[TITLE]</h3>
+<p>[DESCRIPTION]</p>
+</div>
+
+Rules:
+- Keep class names EXACTLY the same.
+- Replace [TITLE] with a short summary of the commit.
+- Replace [DESCRIPTION] with a simple explanation of the changes.
+- Do NOT add markdown, bullets, or extra formatting.
+
+Commit Message:
+$COMMIT_MSG
+"
+
+          # Call Gemini API
+          RESPONSE=$(curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"prompt\": \"$PROMPT\"}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${{ secrets.GEMINI_API_KEY }}")
+
+          # Extract text from response (adjust if your API response structure differs)
+          UPDATE_HTML=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text')
+
+          # Insert under Latest Updates
+          TMPFILE=$(mktemp)
+          awk -v insert="$UPDATE_HTML" '
+            /<h2 class="section-title">Latest Updates<\/h2>/ {
+              print;
+              print insert "\n";
+              next
+            }
+            { print }
+          ' ul.html > "$TMPFILE"
+          mv "$TMPFILE" ul.html
+
+      # 3️⃣ Commit the updated ul.html
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add ul.html
+          git commit -m "Auto update log entry" || echo "No changes to commit"
+          git push
